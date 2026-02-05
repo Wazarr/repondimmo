@@ -1,6 +1,32 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
+// Logo — house silhouette with envelope flap as roof
+function Logo({ size = 32, variant = 'color' }: { size?: number; variant?: 'color' | 'white' }) {
+  const bg = variant === 'white' ? '#FDF8F3' : '#C17F59'
+  const fg = variant === 'white' ? '#C17F59' : '#FDF8F3'
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="32" height="32" rx="8" fill={bg} />
+      {/* House body / envelope body */}
+      <rect x="8" y="14.5" width="16" height="10.5" rx="1.5" stroke={fg} strokeWidth="1.6" />
+      {/* Roof / envelope flap */}
+      <path d="M7.5 14.5L16 7.5L24.5 14.5" stroke={fg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      {/* Envelope V-lines inside */}
+      <path d="M9 15.5L16 20L23 15.5" stroke={fg} strokeWidth="1.2" strokeLinejoin="round" opacity="0.5" />
+    </svg>
+  )
+}
+
+// Platform logos with actual icons
+const platforms = [
+  { name: 'SeLoger', logo: '/logos/seloger.png' },
+  { name: 'LeBonCoin', logo: '/logos/leboncoin.png' },
+  { name: "Bien'ici", logo: '/logos/bienici.png' },
+  { name: 'Logic-Immo', logo: '/logos/logic-immo.png' },
+  { name: 'PAP', logo: '/logos/pap.png' },
+]
+
 // Compact Demo with left explanation / right action
 function DemoSection() {
   const [activeStep, setActiveStep] = useState(0)
@@ -235,9 +261,7 @@ export default function App() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDF8F3]/90 backdrop-blur-md border-b border-[#3D3128]/5">
         <div className="flex justify-between items-center px-5 md:px-12 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 bg-[#C17F59] rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-bold">R</span>
-            </div>
+            <Logo size={32} />
             <span className="text-[#3D3128] text-lg" style={{ fontFamily: 'Fraunces, serif' }}>
               répondimmo
             </span>
@@ -303,18 +327,12 @@ export default function App() {
             {/* Portals logos */}
             <div className="flex flex-wrap items-center gap-3">
               <span className="text-xs text-[#5D4E3C]/40">Intégré avec</span>
-              {[
-                { name: 'SeLoger', color: '#E74C3C' },
-                { name: 'LeBonCoin', color: '#FF6E14' },
-                { name: "Bien'ici", color: '#00B8A9' },
-                { name: 'Logic-Immo', color: '#2D5F9A' },
-                { name: 'PAP', color: '#8B5CF6' },
-              ].map(p => (
+              {platforms.map(p => (
                 <span
                   key={p.name}
-                  className="inline-flex items-center gap-1.5 bg-white border border-[#E8DDD4] rounded-full px-3 py-1 text-xs text-[#5D4E3C]"
+                  className="inline-flex items-center gap-2 bg-white border border-[#E8DDD4] rounded-full px-3 py-1.5 text-xs text-[#5D4E3C]"
                 >
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                  <img src={p.logo} alt={p.name} className="w-4 h-4 object-contain" />
                   {p.name}
                 </span>
               ))}
@@ -603,7 +621,7 @@ export default function App() {
       <footer className="bg-[#3D3128] text-white/50 py-8 px-5 md:px-12">
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#C17F59] rounded-full flex items-center justify-center text-white text-xs font-bold">R</div>
+            <Logo size={24} variant="white" />
             <span className="text-white" style={{ fontFamily: 'Fraunces, serif' }}>répondimmo</span>
           </div>
           <div className="flex gap-6">
@@ -613,7 +631,6 @@ export default function App() {
         </div>
       </footer>
 
-      <div className="h-20" />
     </div>
   )
 }
