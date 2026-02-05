@@ -1,19 +1,16 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
-// Logo — bold R monogram in rounded square
+// Logo — Chat House: house silhouette as speech bubble
 function Logo({ size = 32, variant = 'color' }: { size?: number; variant?: 'color' | 'white' }) {
-  const bg = variant === 'white' ? '#FDF8F3' : '#C17F59'
-  const fg = variant === 'white' ? '#C17F59' : '#FDF8F3'
+  const bg = variant === 'white' ? '#FDF8F3' : '#3D3128'
+  const fg = '#C17F59'
+  const windowColor = variant === 'white' ? '#FDF8F3' : '#3D3128'
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
       <rect width="32" height="32" rx="7" fill={bg} />
-      <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d="M10 7.5H18C21.3 7.5 23.5 10 23.5 13C23.5 15.4 22 17.3 19.8 17.8L24 25H20.5L16.5 18H13V25H10V7.5ZM13 15.5H17.5C19.5 15.5 20.5 14.3 20.5 13C20.5 11.7 19.5 10.5 17.5 10.5H13V15.5Z"
-        fill={fg}
-      />
+      <path d="M16 5L6 13V23H11L15 27V23H26V13L16 5Z" fill={fg} />
+      <rect x="13" y="15" width="6" height="4.5" rx="0.8" fill={windowColor} opacity="0.4" />
     </svg>
   )
 }

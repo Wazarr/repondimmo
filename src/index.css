@@ -21,3 +21,18 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* FAQ animation */
+details p {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.3s ease, opacity 0.2s ease, padding 0.3s ease;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+details[open] p {
+  max-height: 200px;
+  opacity: 1;
+}
