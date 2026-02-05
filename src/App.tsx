@@ -162,6 +162,9 @@ function DemoSection() {
     },
   ]
 
+  const [isVisible, setIsVisible] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
   const resetTimer = useCallback(() => {
     startTimeRef.current = Date.now()
     setProgress(0)
@@ -172,8 +175,35 @@ function DemoSection() {
     resetTimer()
   }, [resetTimer])
 
-  // Auto-advance timer
+  // Only cycle when section is in viewport, reset to step 0 on enter
   useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const entering = entry.isIntersecting
+        setIsVisible(entering)
+        if (entering) {
+          setActiveStep(0)
+          startTimeRef.current = Date.now()
+          setProgress(0)
+        }
+      },
+      { threshold: 0.3 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  // Auto-advance timer — only runs when visible
+  useEffect(() => {
+    if (!isVisible) {
+      if (timerRef.current) clearInterval(timerRef.current)
+      timerRef.current = null
+      return
+    }
+
+    startTimeRef.current = Date.now()
     timerRef.current = setInterval(() => {
       const elapsed = Date.now() - startTimeRef.current
       const pct = Math.min(elapsed / STEP_DURATION, 1)
@@ -189,10 +219,10 @@ function DemoSection() {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [steps.length])
+  }, [isVisible, steps.length])
 
   return (
-    <div>
+    <div ref={sectionRef}>
       {/* Step navigation — mobile: numbered stepper with progress, desktop: pills with progress */}
       <div className="mb-8 md:mb-12">
         {/* Mobile stepper */}
