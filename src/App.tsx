@@ -1,19 +1,19 @@
 import { motion, AnimatePresence } from 'motion/react'
 import { useState } from 'react'
 
-// Logo — house silhouette with envelope flap as roof
+// Logo — bold R monogram in rounded square
 function Logo({ size = 32, variant = 'color' }: { size?: number; variant?: 'color' | 'white' }) {
   const bg = variant === 'white' ? '#FDF8F3' : '#C17F59'
   const fg = variant === 'white' ? '#C17F59' : '#FDF8F3'
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect width="32" height="32" rx="8" fill={bg} />
-      {/* House body / envelope body */}
-      <rect x="8" y="14.5" width="16" height="10.5" rx="1.5" stroke={fg} strokeWidth="1.6" />
-      {/* Roof / envelope flap */}
-      <path d="M7.5 14.5L16 7.5L24.5 14.5" stroke={fg} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Envelope V-lines inside */}
-      <path d="M9 15.5L16 20L23 15.5" stroke={fg} strokeWidth="1.2" strokeLinejoin="round" opacity="0.5" />
+      <rect width="32" height="32" rx="7" fill={bg} />
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M10 7.5H18C21.3 7.5 23.5 10 23.5 13C23.5 15.4 22 17.3 19.8 17.8L24 25H20.5L16.5 18H13V25H10V7.5ZM13 15.5H17.5C19.5 15.5 20.5 14.3 20.5 13C20.5 11.7 19.5 10.5 17.5 10.5H13V15.5Z"
+        fill={fg}
+      />
     </svg>
   )
 }
@@ -39,10 +39,10 @@ function DemoSection() {
       visual: (
         <div className="bg-white rounded-2xl shadow-sm border border-[#E8DDD4] overflow-hidden">
           <div className="bg-[#F5F0EB] px-5 py-3 flex items-center gap-3 border-b border-[#E8DDD4]">
-            <div className="w-8 h-8 bg-[#E74C3C] rounded-lg flex items-center justify-center text-white text-xs font-bold">S</div>
+            <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-7 h-7 rounded-md object-contain" />
             <div className="min-w-0">
-              <p className="text-sm font-medium text-[#3D3128]">SeLoger</p>
-              <p className="text-xs text-[#5D4E3C]/50">notification@seloger.com</p>
+              <p className="text-sm font-medium text-[#3D3128]">leboncoin</p>
+              <p className="text-xs text-[#5D4E3C]/50">noreply@leboncoin.fr</p>
             </div>
             <span className="ml-auto text-xs text-[#5D4E3C]/40">14:32</span>
           </div>
@@ -255,14 +255,21 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FDF8F3]" style={{ fontFamily: 'Lexend, sans-serif' }}>
+    <div className="min-h-screen bg-[#FDF8F3] relative" style={{ fontFamily: 'Lexend, sans-serif' }}>
+
+      {/* Subtle grain overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[60] opacity-[0.025]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        backgroundRepeat: 'repeat',
+        backgroundSize: '128px 128px',
+      }} />
 
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDF8F3]/90 backdrop-blur-md border-b border-[#3D3128]/5">
         <div className="flex justify-between items-center px-5 md:px-12 py-4">
           <div className="flex items-center gap-2.5">
             <Logo size={32} />
-            <span className="text-[#3D3128] text-lg" style={{ fontFamily: 'Fraunces, serif' }}>
+            <span className="text-[#3D3128] text-lg tracking-tight" style={{ fontFamily: 'Fraunces, serif' }}>
               répondimmo
             </span>
           </div>
@@ -287,16 +294,19 @@ export default function App() {
         {/* Soft background shapes */}
         <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-[#E8DDD4]/40 to-transparent pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[#B8C4A8]/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Decorative circles */}
+        <div className="absolute top-1/4 right-1/4 w-64 h-64 border border-[#C17F59]/5 rounded-full pointer-events-none" />
+        <div className="absolute top-1/3 right-1/3 w-40 h-40 border border-[#C17F59]/5 rounded-full pointer-events-none" />
 
         <div className="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-12 grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left: copy */}
           <div className="lg:col-span-7">
-            <span className="inline-block text-[#C17F59] text-sm tracking-wide mb-6">
+            <span className="inline-block text-[#C17F59] text-sm tracking-widest uppercase mb-6">
               Beta gratuite — places limitées
             </span>
 
             <h1
-              className="text-[clamp(2rem,5vw,3.5rem)] leading-[1.15] text-[#3D3128] mb-6"
+              className="text-[clamp(2rem,5vw,3.8rem)] leading-[1.1] text-[#3D3128] mb-6"
               style={{ fontFamily: 'Fraunces, serif' }}
             >
               Vos leads répondus
@@ -318,30 +328,31 @@ export default function App() {
               </a>
               <a
                 href="#demo"
-                className="px-7 py-3.5 rounded-full text-sm text-[#5D4E3C] hover:bg-[#E8DDD4] transition-colors text-center"
+                className="px-7 py-3.5 rounded-full text-sm text-[#5D4E3C] border border-[#E8DDD4] hover:bg-[#E8DDD4] transition-colors text-center"
               >
                 Voir comment ça marche
               </a>
             </div>
 
-            {/* Portals logos */}
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs text-[#5D4E3C]/40">Intégré avec</span>
+            {/* Portals logos — single line */}
+            <div className="flex items-center gap-2 flex-nowrap overflow-x-auto">
+              <span className="text-xs text-[#5D4E3C]/40 shrink-0 mr-1">Intégré avec</span>
               {platforms.map(p => (
                 <span
                   key={p.name}
-                  className="inline-flex items-center gap-2 bg-white border border-[#E8DDD4] rounded-full px-3 py-1.5 text-xs text-[#5D4E3C]"
+                  className="inline-flex items-center gap-1.5 bg-white/80 border border-[#E8DDD4] rounded-full px-2.5 py-1 text-xs text-[#5D4E3C] shrink-0"
                 >
-                  <img src={p.logo} alt={p.name} className="w-4 h-4 object-contain" />
-                  {p.name}
+                  <img src={p.logo} alt={p.name} className="w-4 h-4 object-contain rounded-sm" />
+                  <span className="hidden sm:inline">{p.name}</span>
                 </span>
               ))}
             </div>
           </div>
 
-          {/* Right: card mockup */}
+          {/* Right: LeBonCoin email mockup */}
           <div className="lg:col-span-5 hidden lg:block">
-            <div className="bg-white rounded-2xl shadow-xl border border-[#E8DDD4] overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-xl shadow-[#3D3128]/8 border border-[#E8DDD4] overflow-hidden">
+              {/* Email client chrome */}
               <div className="bg-[#F5F0EB] px-5 py-3 flex items-center gap-3 border-b border-[#E8DDD4]">
                 <div className="flex gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[#E8DDD4]" />
@@ -350,29 +361,47 @@ export default function App() {
                 </div>
                 <span className="text-xs text-[#5D4E3C]/50">Boîte de réception</span>
               </div>
+
               <div className="p-5 space-y-4">
+                {/* LBC notification header */}
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 bg-[#E74C3C] rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0">S</div>
+                  <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-9 h-9 rounded-lg shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#3D3128]">Nouvelle demande</p>
-                    <p className="text-xs text-[#5D4E3C]/50">Appartement T3 — Paris 11e</p>
+                    <p className="text-sm font-medium text-[#3D3128]">leboncoin — Nouveau message</p>
+                    <p className="text-xs text-[#5D4E3C]/50">Appartement T3 · Paris 11e · 1 800€/mois</p>
                   </div>
                 </div>
-                <div className="bg-[#FDF8F3] rounded-xl p-4">
-                  <p className="text-sm text-[#5D4E3C]">
-                    "Bonjour, je suis intéressée par votre appartement. Disponible pour visiter ?"
-                  </p>
+
+                {/* LBC email body */}
+                <div className="rounded-xl overflow-hidden border border-[#E8DDD4]">
+                  <div className="bg-[#FF6E14] px-4 py-2">
+                    <p className="text-white text-xs font-medium">leboncoin.fr</p>
+                  </div>
+                  <div className="bg-[#FDF8F3] p-4">
+                    <p className="text-sm text-[#5D4E3C] leading-relaxed">
+                      "Bonjour, je suis intéressée par votre appartement. Disponible pour visiter ?"
+                    </p>
+                    <p className="text-xs text-[#5D4E3C]/50 mt-2">Marie D. · 06 12 34 56 78</p>
+                  </div>
                 </div>
-                <div className="h-px bg-[#E8DDD4]" />
+
+                {/* Divider with timer */}
+                <div className="flex items-center gap-3">
+                  <div className="h-px bg-[#E8DDD4] flex-1" />
+                  <span className="text-[10px] text-[#C17F59] font-medium bg-[#C17F59]/10 px-2.5 py-0.5 rounded-full">⚡ 27s</span>
+                  <div className="h-px bg-[#E8DDD4] flex-1" />
+                </div>
+
+                {/* Auto-response */}
                 <div className="bg-[#B8C4A8]/10 rounded-xl p-4 border border-[#B8C4A8]/20">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="w-2 h-2 bg-[#5D6B4A] rounded-full" />
-                    <span className="text-xs font-medium text-[#5D6B4A]">Réponse auto — 27s</span>
+                    <span className="text-xs font-medium text-[#5D6B4A]">Réponse auto envoyée</span>
                   </div>
                   <p className="text-sm text-[#5D4E3C]">
                     Bonjour Marie ! Le bien est disponible.
                     <br />
-                    <span className="text-[#C17F59]">→ Réserver une visite</span>
+                    <span className="text-[#C17F59] font-medium">→ Réserver une visite</span>
                   </p>
                 </div>
               </div>
@@ -390,7 +419,9 @@ export default function App() {
       </section>
 
       {/* Problem stats */}
-      <section className="py-16 md:py-24 bg-[#3D3128]">
+      <section className="py-16 md:py-24 bg-[#3D3128] relative overflow-hidden">
+        {/* Decorative element */}
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C17F59]/30 to-transparent" />
         <div className="max-w-5xl mx-auto px-5 md:px-12">
           <h2
             className="text-2xl md:text-3xl text-white text-center mb-12"
@@ -425,7 +456,7 @@ export default function App() {
       <section id="demo" className="py-16 md:py-24 px-5 md:px-12">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-14">
-            <span className="text-[#C17F59] text-sm tracking-wide">Comment ça marche</span>
+            <span className="text-[#C17F59] text-sm tracking-widest uppercase">Comment ça marche</span>
             <h2
               className="text-2xl md:text-3xl text-[#3D3128] mt-2"
               style={{ fontFamily: 'Fraunces, serif' }}
@@ -439,7 +470,8 @@ export default function App() {
       </section>
 
       {/* 3-step summary */}
-      <section className="py-16 md:py-24 bg-[#E8DDD4]">
+      <section className="py-16 md:py-24 bg-[#E8DDD4] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C17F59]/20 to-transparent" />
         <div className="max-w-4xl mx-auto px-5 md:px-12">
           <h2
             className="text-2xl md:text-3xl text-[#3D3128] text-center mb-12"
@@ -450,11 +482,12 @@ export default function App() {
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { num: '1', title: 'Connectez', desc: 'Votre boîte Gmail ou Outlook', icon: '📧' },
-              { num: '2', title: 'Laissez faire', desc: 'L\'IA répond 24h/24, 7j/7', icon: '⚡' },
-              { num: '3', title: 'Récoltez', desc: 'Les RDV arrivent automatiquement', icon: '📅' },
+              { num: '01', title: 'Connectez', desc: 'Votre boîte Gmail ou Outlook', icon: '📧' },
+              { num: '02', title: 'Laissez faire', desc: 'L\'IA répond 24h/24, 7j/7', icon: '⚡' },
+              { num: '03', title: 'Récoltez', desc: 'Les RDV arrivent automatiquement', icon: '📅' },
             ].map((step, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 text-center">
+              <div key={i} className="bg-white rounded-2xl p-6 text-center relative">
+                <span className="absolute top-4 right-4 text-xs text-[#C17F59]/30 font-mono">{step.num}</span>
                 <div className="text-2xl mb-3">{step.icon}</div>
                 <h3 className="font-semibold text-[#3D3128] mb-1">{step.title}</h3>
                 <p className="text-sm text-[#5D4E3C]/60">{step.desc}</p>
@@ -468,7 +501,7 @@ export default function App() {
       <section id="tarifs" className="py-16 md:py-24 px-5 md:px-12">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
-            <span className="text-[#C17F59] text-sm tracking-wide">Tarification</span>
+            <span className="text-[#C17F59] text-sm tracking-widest uppercase">Tarification</span>
             <h2
               className="text-2xl md:text-3xl text-[#3D3128] mt-2"
               style={{ fontFamily: 'Fraunces, serif' }}
@@ -528,7 +561,8 @@ export default function App() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-16 md:py-24 bg-[#E8DDD4] px-5 md:px-12">
+      <section id="faq" className="py-16 md:py-24 bg-[#E8DDD4] px-5 md:px-12 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C17F59]/20 to-transparent" />
         <div className="max-w-2xl mx-auto">
           <h2
             className="text-2xl md:text-3xl text-[#3D3128] text-center mb-8"
@@ -618,7 +652,8 @@ export default function App() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#3D3128] text-white/50 py-8 px-5 md:px-12">
+      <footer className="bg-[#3D3128] text-white/50 py-8 px-5 md:px-12 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[#C17F59]/30 to-transparent" />
         <div className="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
             <Logo size={24} variant="white" />
