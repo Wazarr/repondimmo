@@ -264,12 +264,12 @@ export default function App() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#FDF8F3]/90 backdrop-blur-md border-b border-[#3D3128]/5">
         <div className="flex justify-between items-center px-5 md:px-12 py-4">
-          <div className="flex items-center gap-2.5">
+          <a href="/" className="flex items-center gap-2.5">
             <Logo size={32} />
             <span className="text-[#3D3128] text-lg tracking-tight" style={{ fontFamily: 'Fraunces, serif' }}>
               répondimmo
             </span>
-          </div>
+          </a>
 
           <nav className="hidden md:flex items-center gap-8 text-sm text-[#5D4E3C]/60">
             <a href="#demo" className="hover:text-[#3D3128] transition-colors">Fonctionnement</a>
@@ -656,10 +656,7 @@ export default function App() {
             <Logo size={24} variant="white" />
             <span className="text-white" style={{ fontFamily: 'Fraunces, serif' }}>répondimmo</span>
           </div>
-          <div className="flex gap-6">
-            <a href="#" className="hover:text-white transition-colors">Mentions légales</a>
-            <a href="#" className="hover:text-white transition-colors">Contact</a>
-          </div>
+          <a href="#beta" className="hover:text-white transition-colors">Contact</a>
         </div>
       </footer>
 
