@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react'
-import { useState } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 // Logo — Chat House: house silhouette as speech bubble
 function Logo({ size = 32, variant = 'color' }: { size?: number; variant?: 'color' | 'white' }) {
@@ -25,8 +25,13 @@ const platforms = [
 ]
 
 // Compact Demo with left explanation / right action
+const STEP_DURATION = 6000 // 6s per step
+
 function DemoSection() {
   const [activeStep, setActiveStep] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const startTimeRef = useRef(Date.now())
 
   const steps = [
     {
@@ -157,70 +162,160 @@ function DemoSection() {
     },
   ]
 
+  const resetTimer = useCallback(() => {
+    startTimeRef.current = Date.now()
+    setProgress(0)
+  }, [])
+
+  const goToStep = useCallback((i: number) => {
+    setActiveStep(i)
+    resetTimer()
+  }, [resetTimer])
+
+  // Auto-advance timer
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current
+      const pct = Math.min(elapsed / STEP_DURATION, 1)
+      setProgress(pct)
+
+      if (pct >= 1) {
+        setActiveStep(prev => (prev + 1) % steps.length)
+        startTimeRef.current = Date.now()
+        setProgress(0)
+      }
+    }, 50)
+
+    return () => {
+      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, [steps.length])
+
   return (
     <div>
-      {/* Step navigation */}
-      <div className="flex gap-1 mb-8 md:mb-12 overflow-x-auto pb-2">
-        {steps.map((s, i) => (
-          <button
-            key={i}
-            onClick={() => setActiveStep(i)}
-            className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all ${
-              activeStep === i
-                ? 'bg-[#C17F59] text-white'
-                : 'bg-[#E8DDD4] text-[#5D4E3C]/70 hover:bg-[#D4C4B0]'
-            }`}
-          >
-            {i + 1}. {s.label}
-          </button>
-        ))}
+      {/* Step navigation — mobile: numbered stepper with progress, desktop: pills with progress */}
+      <div className="mb-8 md:mb-12">
+        {/* Mobile stepper */}
+        <div className="flex md:hidden items-center justify-center mb-3">
+          {steps.map((_, i) => (
+            <div key={i} className="flex items-center">
+              <button onClick={() => goToStep(i)} className="relative">
+                <span className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium transition-all ${
+                  activeStep === i
+                    ? 'bg-[#C17F59] text-white scale-110 shadow-md shadow-[#C17F59]/25'
+                    : i < activeStep
+                      ? 'bg-[#C17F59]/20 text-[#C17F59]'
+                      : 'bg-[#E8DDD4] text-[#5D4E3C]/50'
+                }`}>
+                  {i < activeStep ? '✓' : i + 1}
+                </span>
+                {/* Progress ring on active step */}
+                {activeStep === i && (
+                  <svg className="absolute -inset-0.5 w-10 h-10 -rotate-90" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="#C17F59" strokeWidth="2" strokeOpacity="0.2" />
+                    <circle cx="20" cy="20" r="18" fill="none" stroke="#FDF8F3" strokeWidth="2"
+                      strokeDasharray={`${2 * Math.PI * 18}`}
+                      strokeDashoffset={`${2 * Math.PI * 18 * (1 - progress)}`}
+                      strokeLinecap="round"
+                      className="transition-none"
+                    />
+                  </svg>
+                )}
+              </button>
+              {i < steps.length - 1 && (
+                <div className={`w-6 h-px mx-1 transition-colors ${
+                  i < activeStep ? 'bg-[#C17F59]/30' : 'bg-[#E8DDD4]'
+                }`} />
+              )}
+            </div>
+          ))}
+        </div>
+        <p className="text-center text-sm text-[#5D4E3C]/70 md:hidden">
+          {steps[activeStep].label}
+        </p>
+        {/* Desktop pills with progress bar underneath active */}
+        <div className="hidden md:flex gap-2">
+          {steps.map((s, i) => (
+            <button
+              key={i}
+              onClick={() => goToStep(i)}
+              className={`relative px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all overflow-hidden ${
+                activeStep === i
+                  ? 'bg-[#3D3128] text-white'
+                  : i < activeStep
+                    ? 'bg-[#C17F59]/15 text-[#C17F59]'
+                    : 'bg-[#E8DDD4] text-[#5D4E3C]/70 hover:bg-[#D4C4B0]'
+              }`}
+            >
+              {/* Progress fill on active pill */}
+              {activeStep === i && (
+                <span
+                  className="absolute inset-0 bg-[#C17F59] origin-left transition-none"
+                  style={{ transform: `scaleX(${progress})` }}
+                />
+              )}
+              <span className="relative z-10">{i + 1}. {s.label}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Two-column layout: explanation left, visual right */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeStep}
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -12 }}
-          transition={{ duration: 0.25 }}
-          className="grid md:grid-cols-2 gap-8 md:gap-12 items-start"
-        >
-          {/* Left: explanation */}
-          <div className="flex flex-col justify-center">
-            <span className="text-[#C17F59] text-sm tracking-wide mb-3">
-              Étape {activeStep + 1} / {steps.length}
-            </span>
-            <h3
-              className="text-2xl md:text-3xl text-[#3D3128] mb-4 leading-snug"
-              style={{ fontFamily: 'Fraunces, serif' }}
+      {/* Two-column layout — fixed height container to prevent shifts */}
+      <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-start">
+        {/* Left: explanation */}
+        <div className="flex flex-col justify-center min-h-[200px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`text-${activeStep}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
             >
-              {steps[activeStep].title}
-            </h3>
-            <p className="text-[#5D4E3C]/70 leading-relaxed">
-              {steps[activeStep].desc}
-            </p>
-
-            {/* Next step button */}
-            {activeStep < steps.length - 1 && (
-              <button
-                onClick={() => setActiveStep(activeStep + 1)}
-                className="mt-6 text-sm text-[#C17F59] hover:text-[#A86D4B] transition-colors self-start flex items-center gap-2"
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[#C17F59] text-sm tracking-wide">
+                  Étape {activeStep + 1} / {steps.length}
+                </span>
+                {activeStep < steps.length - 1 && (
+                  <button
+                    onClick={() => goToStep(activeStep + 1)}
+                    className="inline-flex items-center gap-1 bg-[#C17F59]/10 hover:bg-[#C17F59]/20 text-[#C17F59] text-xs font-medium px-3 py-1 rounded-full transition-colors group"
+                  >
+                    Suivant
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-x-0.5 transition-transform">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <h3
+                className="text-2xl md:text-3xl text-[#3D3128] mb-4 leading-snug"
+                style={{ fontFamily: 'Fraunces, serif' }}
               >
-                Étape suivante
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </button>
-            )}
-          </div>
+                {steps[activeStep].title}
+              </h3>
+              <p className="text-[#5D4E3C]/70 leading-relaxed">
+                {steps[activeStep].desc}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-          {/* Right: visual */}
-          <div>
-            {steps[activeStep].visual}
-          </div>
-        </motion.div>
-      </AnimatePresence>
+        {/* Right: visual */}
+        <div className="relative min-h-[320px]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`visual-${activeStep}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {steps[activeStep].visual}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   )
 }
@@ -287,7 +382,7 @@ export default function App() {
       </header>
 
       {/* Hero — Full Viewport */}
-      <section className="h-screen flex items-center relative overflow-hidden">
+      <section className="lg:h-screen flex items-center relative overflow-hidden pt-24 pb-12 lg:py-0">
         {/* Soft background shapes */}
         <div className="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-[#E8DDD4]/40 to-transparent pointer-events-none" />
         <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[#B8C4A8]/10 rounded-full blur-3xl pointer-events-none" />
@@ -298,25 +393,31 @@ export default function App() {
         <div className="relative z-10 w-full max-w-6xl mx-auto px-5 md:px-12 grid lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left: copy */}
           <div className="lg:col-span-7">
-            <span className="inline-block text-[#C17F59] text-sm tracking-widest uppercase mb-6">
+            <span className="inline-block text-[#C17F59] text-xs sm:text-sm tracking-widest uppercase mb-4 md:mb-6">
               Beta gratuite — places limitées
             </span>
 
             <h1
-              className="text-[clamp(2rem,5vw,3.8rem)] leading-[1.1] text-[#3D3128] mb-6"
+              className="text-[clamp(2rem,5vw,3.8rem)] leading-[1.1] text-[#3D3128] mb-4"
               style={{ fontFamily: 'Fraunces, serif' }}
             >
-              Vos leads répondus
+              Répondez à vos leads
               <br />
               <em className="text-[#C17F59] not-italic">en 30 secondes.</em>
             </h1>
+            <p
+              className="text-[clamp(1.1rem,2.5vw,1.5rem)] text-[#5D4E3C]/80 mb-6"
+              style={{ fontFamily: 'Fraunces, serif' }}
+            >
+              Sans lever le petit doigt.
+            </p>
 
-            <p className="text-[#5D4E3C]/70 text-base md:text-lg leading-relaxed mb-8 max-w-lg">
+            <p className="text-[#5D4E3C]/70 text-sm sm:text-base md:text-lg leading-relaxed mb-6 sm:mb-8 max-w-lg">
               L'IA qui répond à vos demandes SeLoger et LeBonCoin 24h/24,
               qualifie les prospects, et vous envoie que les leads chauds.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-10">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6 sm:mb-10">
               <a
                 href="#beta"
                 className="bg-[#3D3128] text-white px-7 py-3.5 rounded-full text-sm font-medium hover:bg-[#C17F59] transition-colors text-center"
@@ -346,7 +447,30 @@ export default function App() {
             </div>
           </div>
 
-          {/* Right: LeBonCoin email mockup */}
+          {/* Mobile: live activity flow card */}
+          <div className="lg:hidden mt-4">
+            <div className="bg-white rounded-2xl shadow-lg shadow-[#3D3128]/8 border border-[#E8DDD4] overflow-hidden">
+              {/* Incoming lead */}
+              <div className="px-4 py-3 flex items-center gap-3 border-b border-[#E8DDD4]/60">
+                <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-7 h-7 rounded-md shrink-0 bg-[#FF6E14] p-0.5" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-medium text-[#3D3128] truncate">"Disponible pour visiter ?"</p>
+                  <p className="text-[11px] text-[#5D4E3C]/45">Marie D. · T3 Paris 11e</p>
+                </div>
+              </div>
+              {/* Timer + response row */}
+              <div className="px-4 py-3 flex items-center gap-3 bg-[#FDFAF7]">
+                <span className="text-[11px] text-[#C17F59] font-semibold bg-[#C17F59]/10 px-2.5 py-1 rounded-full shrink-0">⚡ 27s</span>
+                <div className="h-px bg-[#E8DDD4] flex-1" />
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="w-1.5 h-1.5 bg-[#5D6B4A] rounded-full" />
+                  <span className="text-[11px] font-medium text-[#5D6B4A]">Réponse envoyée</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop: full LeBonCoin email mockup */}
           <div className="lg:col-span-5 hidden lg:block">
             <div className="bg-white rounded-2xl shadow-xl shadow-[#3D3128]/8 border border-[#E8DDD4] overflow-hidden">
               {/* Email client chrome */}
@@ -407,7 +531,7 @@ export default function App() {
         </div>
 
         {/* Scroll hint */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#5D4E3C]/30 text-xs flex flex-col items-center gap-2">
+        <div className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 text-[#5D4E3C]/30 text-xs flex-col items-center gap-2">
           <span>Défiler</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M12 5v14M5 12l7 7 7-7"/>
