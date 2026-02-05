@@ -39,7 +39,7 @@ function DemoSection() {
       visual: (
         <div className="bg-white rounded-2xl shadow-sm border border-[#E8DDD4] overflow-hidden">
           <div className="bg-[#F5F0EB] px-5 py-3 flex items-center gap-3 border-b border-[#E8DDD4]">
-            <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-7 h-7 rounded-md object-contain" />
+            <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-7 h-7 rounded-md object-contain bg-[#FF6E14] p-0.5" />
             <div className="min-w-0">
               <p className="text-sm font-medium text-[#3D3128]">leboncoin</p>
               <p className="text-xs text-[#5D4E3C]/50">noreply@leboncoin.fr</p>
@@ -365,7 +365,7 @@ export default function App() {
               <div className="p-5 space-y-4">
                 {/* LBC notification header */}
                 <div className="flex items-start gap-3">
-                  <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-9 h-9 rounded-lg shrink-0" />
+                  <img src="/logos/leboncoin.png" alt="LeBonCoin" className="w-9 h-9 rounded-lg shrink-0 bg-[#FF6E14] p-0.5" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-[#3D3128]">leboncoin — Nouveau message</p>
                     <p className="text-xs text-[#5D4E3C]/50">Appartement T3 · Paris 11e · 1 800€/mois</p>
@@ -528,7 +528,7 @@ export default function App() {
             ].map((plan, i) => (
               <div
                 key={i}
-                className={`rounded-2xl p-6 ${plan.featured ? 'bg-[#C17F59] text-white' : 'bg-white border-2 border-[#E8DDD4]'}`}
+                className={`rounded-2xl p-6 transition-all duration-200 hover:shadow-lg hover:-translate-y-1 ${plan.featured ? 'bg-[#C17F59] text-white hover:shadow-[#C17F59]/20' : 'bg-white border-2 border-[#E8DDD4] hover:border-[#C17F59]/30 hover:shadow-[#C17F59]/10'}`}
               >
                 {plan.featured && (
                   <span className="text-xs bg-white/20 px-2.5 py-1 rounded-full">Recommandé</span>
